@@ -1,0 +1,466 @@
+ <!DOCTYPE html>
+<html>
+
+
+
+
+  <head>
+    <meta charset="UTF-8">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="js/permutations.js"></script>
+  </head>
+
+
+
+
+  <body>
+  	<h1>Simplified DES (S-DES) Calculator</h1>
+
+    <form id="form" onsubmit="return false;">
+      8-bit binary message or cipher text to encrypt or decrypt:<br>
+      <input type="text" id="inputText"  maxlength="8">
+      <br>
+      10-bit binary key:<br>
+      <input type="text" id="inputKey"  maxlength="10"><br><br>
+      <input type="radio" id="startMeChecked" name="encryptFlag" value="encrypt" checked onclick="setEncryptFlag(true);"> Encrypt
+      <input type="radio" name="encryptFlag" value="decrypt" onclick="setEncryptFlag(false);"> Decrypt
+      <br><br>
+      <input type="submit" value="SUBMIT" onclick="inputHandler();">
+      <input type="reset">
+    </form>
+    <div id="inputError" style="display:none">There was an error with the input. Please re-enter</div>
+
+    <div id="TESTING"></div>
+    
+    <br>
+    <hr class="mainDivider">
+    
+
+    <div id="detailedOutput">
+      <h2>Start the S-DES algorithim.</h2>
+      <h3>Input</h3>
+      <table>
+        <body>
+          <tr id="originalText">
+          </tr>
+        </body>
+      </table>
+
+      <h3>Key</h3>
+      <table>
+        <body>
+          <tr id="originalKey">
+          </tr>
+        </body>
+      </table>
+
+      <br>
+      <hr class="mainDivider">
+
+      <h2>Generating Sub-Keys</h2>
+      <h3>Original Key</h3>
+      <table>
+        <body>
+          <tr id="originalKeyCopy">
+          </tr>
+        </body>
+      </table>
+
+      <h3>After applying permutation P10</h3>
+      <table>
+        <body>
+          <tr id="afterP10Key">
+          </tr>
+        </body>
+      </table>
+
+      <h3>After split</h3>
+      <div class="splitTableContainer">
+        <div class="splitTable">
+          <h4 class="removeTopMargin">Left side after split</h4>
+          <table>
+            <body>
+              <tr id="afterFirstSplitLeft">
+              </tr>
+            </body>
+          </table>
+        </div>
+        <div class="splitTable">
+          <h4 class="removeTopMargin">Right side after split</h4>
+          <table>
+            <body>
+              <tr id="afterFirstSplitRight">
+              </tr>
+            </body>
+          </table>
+        </div>
+      </div>
+      
+
+      <h3>After LS-1 (Left Shift of 1)</h3>
+      <div class="splitTableContainer">
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Left side after shift</h4>
+        <table>
+          <body>
+            <tr id="afterLeftLS1">
+            </tr>
+          </body>
+        </table>
+        </div>
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Right side after shift</h4>
+        <table>
+          <body>
+            <tr id="afterRightLS1">
+            </tr>
+          </body>
+        </table>
+        </div>
+      </div>
+
+      <h3>First subkey K1</h3>
+      <h4>Solve by permutation P8 of the concatination of the left LS-1 result to the right LS-1 result</h4>
+      <table>
+        <body>
+          <tr id="subKeyK1">
+          </tr>
+        </body>
+      </table>
+
+      <h3>After LS-2 (Left Shift of 2) of the result of LS-1</h3>
+      <div class="splitTableContainer">
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Left side after shift</h4>
+        <table>
+          <body>
+            <tr id="afterLeftLS2">
+            </tr>
+          </body>
+        </table>
+        </div>
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Right side after shift</h4>
+        <table>
+          <body>
+            <tr id="afterRightLS2">
+            </tr>
+          </body>
+        </table>
+        </div>
+      </div>
+
+      <h3>Second subkey K2</h3>
+      <h4>Solve by permutation P8 of the concatination of the left LS-2 result to the right LS-2 result</h4>
+      <table>
+        <body>
+          <tr id="subKeyK2">
+          </tr>
+        </body>
+      </table>
+
+      <br>
+      <hr class="mainDivider">
+
+      <h2>Encrypt/Decrypt the message</h2>
+      <h3>Input</h3>
+      <table>
+        <body>
+          <tr id="originalTextCopy">
+          </tr>
+        </body>
+      </table>
+      <h3>Subkey K1</h3>
+      <table>
+        <body>
+          <tr id="subKeyK1Copy">
+          </tr>
+        </body>
+      </table>
+      <h3>Subkey K2</h3>
+      <table>
+        <body>
+          <tr id="subKeyK2Copy">
+          </tr>
+        </body>
+      </table>
+
+      
+
+
+      <h3>After applying initial permutation IP</h3>
+      <table>
+        <body>
+          <tr id="afterIP">
+          </tr>
+        </body>
+      </table>
+
+      <br>
+      <hr class="inBetweenDivider">
+
+      <h2>Start Round Function 1</h2>
+
+      <h3>After IP split</h3>
+      <div class="splitTableContainer">
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Left side after split</h4>
+        <table>
+          <body>
+            <tr id="afterIPSplitLeft">
+            </tr>
+          </body>
+        </table>
+        </div>
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Right side after split</h4>
+        <table>
+          <body>
+            <tr id="afterIPSplitRight">
+            </tr>
+          </body>
+        </table>
+        </div>
+      </div>
+
+      <h3>After applying expansion permutation EP Round 1</h3>
+      <table>
+        <body>
+          <tr id="afterEPRound1">
+          </tr>
+        </body>
+      </table>
+
+      <h3>After applying xor with round key: k1 if encryption, k2 if decryption</h3>
+      <table>
+        <body>
+          <tr id="afterXORK1">
+          </tr>
+        </body>
+      </table>
+
+      <h3>After split xor with round key</h3>
+      <div class="splitTableContainer">
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Left side after split</h4>
+        <table>
+          <body>
+            <tr id="afterXORK1SplitLeft">
+            </tr>
+          </body>
+        </table>
+        </div>
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Right side after split</h4>
+        <table>
+          <body>
+            <tr id="afterXORK1SplitRight">
+            </tr>
+          </body>
+        </table>
+        </div>
+      </div>
+
+      <h3>After Substitions</h3>
+      <div class="splitTableContainer">
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Left side, S-box S0</h4>
+        <table>
+          <body>
+            <tr id="afterS0Round1">
+            </tr>
+          </body>
+        </table>
+        </div>
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Right side, S-box S1</h4>
+        <table>
+          <body>
+            <tr id="afterS1Round1">
+            </tr>
+          </body>
+        </table>
+        </div>
+      </div>
+
+      <h3>After applying P4, ROUND 1</h3>
+      <table>
+        <body>
+          <tr id="afterP4Round1">
+          </tr>
+        </body>
+      </table>
+
+      <h3>After applying final xor of ROUND 1</h3>
+      <table>
+        <body>
+          <tr id="afterFinalXORRound1">
+          </tr>
+        </body>
+      </table>
+
+      <h3>Result of round function fk1</h3>
+      <table>
+        <body>
+          <tr id="resultOfRoundFunctionFK1">
+          </tr>
+        </body>
+      </table>
+
+      <br>
+      <hr class="inBetweenDivider">
+
+      <h3>Result of switch function</h3>
+      <table>
+        <body>
+          <tr id="afterSwitch">
+          </tr>
+        </body>
+      </table>
+
+      <br>
+      <hr class="mainDivider">
+
+      <h2>Start Round Function 2</h2>
+
+      <h3>After switch split</h3>
+      <div class="splitTableContainer">
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Left side after split</h4>
+        <table>
+          <body>
+            <tr id="afterSwitchSplitLeft">
+            </tr>
+          </body>
+        </table>
+        </div>
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Right side after split</h4>
+        <table>
+          <body>
+            <tr id="afterSwitchSplitRight">
+            </tr>
+          </body>
+        </table>
+        </div>
+      </div>
+
+      <h3>After applying expansion permutation EP Round 2</h3>
+      <table>
+        <body>
+          <tr id="afterEPRound2">
+          </tr>
+        </body>
+      </table>
+
+      <h3>After applying xor with round key: k2 if encryption, k1 if decryption</h3>
+      <table>
+        <body>
+          <tr id="afterXORK2">
+          </tr>
+        </body>
+      </table>
+
+      <h3>After split xor with round key</h3>
+      <div class="splitTableContainer">
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Left side after split</h4>
+        <table>
+          <body>
+            <tr id="afterXORK2SplitLeft">
+            </tr>
+          </body>
+        </table>
+        </div>
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Right side after split</h4>
+        <table>
+          <body>
+            <tr id="afterXORK2SplitRight">
+            </tr>
+          </body>
+        </table>
+        </div>
+      </div>
+
+      <h3>After Substitions</h3>
+      <div class="splitTableContainer">
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Left side, S-box S0</h4>
+        <table>
+          <body>
+            <tr id="afterS0Round2">
+            </tr>
+          </body>
+        </table>
+        </div>
+        <div class="splitTable">
+        <h4 class="removeTopMargin">Right side, S-box S1</h4>
+        <table>
+          <body>
+            <tr id="afterS1Round2">
+            </tr>
+          </body>
+        </table>
+        </div>
+      </div>
+
+      <h3>After applying P4, ROUND 2</h3>
+      <table>
+        <body>
+          <tr id="afterP4Round2">
+          </tr>
+        </body>
+      </table>
+
+      <h3>After applying final xor of ROUND 2</h3>
+      <table>
+        <body>
+          <tr id="afterFinalXORRound2">
+          </tr>
+        </body>
+      </table>
+
+
+      <h3>Result of round function fk2</h3>
+      <table>
+        <body>
+          <tr id="resultOfRoundFunctionFK2">
+          </tr>
+        </body>
+      </table>
+
+      <br>
+      <hr class="inBetweenDivider">
+
+      <h3>Final Result = (IP Inverse)</h3>
+      <table>
+        <body>
+          <tr id="finalResult">
+          </tr>
+        </body>
+      </table>
+
+      <br>
+      <hr class="mainDivider">
+
+    </div>
+    <script type="text/javascript">
+      $("#detailedOutput").hide();
+      $("#inputError").hide();
+      $("#startMeChecked").prop("checked", true);
+      encryptFlag = true;
+    </script>
+
+
+
+
+
+  </body>
+
+
+
+
+</html>
