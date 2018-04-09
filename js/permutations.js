@@ -495,28 +495,15 @@ function sdes(inputText, key)
 	roundKeys.push(objectHolder.k2);
 
 
-	if (encryptFlag)
-	{
-		postIPText = ip(inputText);
+	postIPText = ip(inputText);
 
-		//Store the afterIP to print to the screen later
-		printObject.afterIP = postIPText;
+	//Store the afterIP to print to the screen later
+	printObject.afterIP = postIPText;
 
-		rightText = postIPText.slice(4, 8);
-		leftText = postIPText.slice();
-		leftText.splice(4, 4);
-	}
-	else
-	{
-		postIPText = ip(inputText);
+	rightText = postIPText.slice(4, 8);
+	leftText = postIPText.slice();
+	leftText.splice(4, 4);
 
-		//Store the afterIP to print to the screen later
-		printObject.afterIP = postIPText;
-
-		rightText = postIPText.slice(4, 8);
-		leftText = postIPText.slice();
-		leftText.splice(4, 4);
-	}
 
 	//Store the left & right half of IP to print to the screen later
 	printObject.afterIPSplitLeft = leftText.slice();
@@ -554,14 +541,7 @@ function sdes(inputText, key)
 
 	outputText = objectHolder.leftString.concat(objectHolder.rightString);
 
-	if (!encryptFlag)
-	{
-		outputText = ip(outputText);
-	}
-	else
-	{
-		outputText = ipInverse(outputText);
-	}
+	outputText = ipInverse(outputText);
 
 	printObject.finalResult = outputText;
 
